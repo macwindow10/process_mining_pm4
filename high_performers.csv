@@ -1,4 +1,4 @@
- log_id,Case_id,Case,timestamp,Activity,Grades,Cluster
+log_id,Case_id,Case,timestamp,Activity,Grades,Cluster
 2365,244,Takreem,05/02/23 09:57:21pm,a,94.0,0
 2367,244,.Takreem.,05/02/23 09:57:27pm,b,94.0,0
 2368,244,.Takreem.,05/02/23 09:57:33pm,c,94.0,0

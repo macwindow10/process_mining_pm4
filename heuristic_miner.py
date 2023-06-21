@@ -2,6 +2,7 @@ import pandas as pd
 from pm4py.objects.conversion.log import converter as log_converter
 from pm4py.algo.discovery.heuristics import algorithm as heuristics_miner
 from pm4py.visualization.heuristics_net import visualizer as hn_visualizer
+from pm4py.visualization.petri_net import visualizer as pn_visualizer
 from PIL import Image
 
 # Load the CSV file into a pandas DataFrame
@@ -12,8 +13,7 @@ df = df.rename(columns={
     'Case_id': 'case:concept:name',
     'Case': 'concept:name',
     'timestamp': 'time:timestamp',
-    'Activity': 'concept:name',
-    'Grades': 'Grade'
+    'Activity': 'concept:name'
 })
 
 # Convert the DataFrame to an event log object in XES format
@@ -30,3 +30,9 @@ hn_visualizer.save(gviz, "heuristics_net.png")
 
 # Display the Heuristics net visualization
 Image.open("heuristics_net.png").show()
+
+
+# Petri net visualisation
+heu_net, im, fm = heuristics_miner.apply(log)
+gviz = pn_visualizer.apply(heu_net, im, fm)
+pn_visualizer.view(gviz)

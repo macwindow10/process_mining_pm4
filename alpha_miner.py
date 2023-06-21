@@ -13,21 +13,11 @@ df_selected = df_selected.rename(columns={
     'Case_id': 'case:concept:name',
     'Activity': 'concept:name',
     'timestamp': 'time:timestamp'
+})
+print(df_selected)
 
-})
-df = df.rename(columns={
-    'Case_id': 'case:concept:name',
-    'Case': 'concept:name_1',
-    'timestamp': 'time:timestamp',
-    'Activity': 'concept:name',
-    'Grades': 'Grade'
-})
 # Sort the DataFrame by case ID and timestamp
-# df_selected = df_selected.sort_values(by=['case:concept:name', 'time:timestamp'])
-
-
-# Rename the column names according to XES format
-
+df_selected = df_selected.sort_values(by=['case:concept:name', 'time:timestamp'])
 
 # Convert the DataFrame to an event log object in XES format
 log = log_converter.apply(df_selected)
