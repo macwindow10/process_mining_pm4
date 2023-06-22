@@ -86,6 +86,8 @@ tree = inductive_miner.apply(log)
 gviz = pt_visualizer.apply(tree)
 pt_visualizer.view(gviz)
 # pt_visualizer.save(gviz, 'inductive_miner.png')
+bpmn_model = pm4py.convert_to_bpmn(tree)
+pm4py.view_bpmn(bpmn_model)
 
 # convert the process tree to a petri net
 net, initial_marking, final_marking = pt_converter.apply(tree)

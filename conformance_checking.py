@@ -1,66 +1,73 @@
 import pandas as pd
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
 import pm4py
 from pm4py.objects.conversion.log import converter as log_converter
-from pm4py.algo.discovery.alpha import algorithm as alpha_miner
-from pm4py.algo.discovery.inductive import algorithm as inductive_miner
-from pm4py.algo.conformance.tokenreplay import algorithm as token_based_replay
-from pm4py.algo.conformance.tokenreplay.diagnostics import duration_diagnostics
 
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', None)
+
+# Load the CSV file into a pandas DataFrame
 df = pd.read_csv('high_performers.csv')
-selected_columns = ['Case_id', 'Activity', 'timestamp']
+selected_columns = ['Case_id', 'Activity', 'timestamp', 'Case']
 df_selected = df[selected_columns]
 df_selected = df_selected.rename(columns={
     'Case_id': 'case:concept:name',
     'Activity': 'concept:name',
-    'timestamp': 'time:timestamp'
-
-})
-df = df.rename(columns={
-    'Case_id': 'case:concept:name',
-    'Case': 'concept:name_1',
     'timestamp': 'time:timestamp',
-    'Activity': 'concept:name',
-    'Grades': 'Grade'
+    'Case': 'org:resource'
 })
-
-# Convert the DataFrame to an event log object in XES format
+df_selected['time:timestamp'] = pd.to_datetime(df_selected['time:timestamp'])
+print(df_selected.dtypes)
 log = log_converter.apply(df_selected)
-
-# Generating model using only a part of the log
-net, initial_marking, final_marking = alpha_miner.apply(log)
-
-#
-# token base conformance
-#
-parameters_tbr = {
-    token_based_replay.Variants.TOKEN_REPLAY.value.Parameters.DISABLE_VARIANTS: True,
-    token_based_replay.Variants.TOKEN_REPLAY.value.Parameters.ENABLE_PLTR_FITNESS: True
-}
-replayed_traces, place_fitness, trans_fitness, unwanted_activities = \
-    token_based_replay.apply(log, net, initial_marking,
-                             final_marking,
-                             parameters=parameters_tbr)
-print('replayed_traces: ', replayed_traces)
-print('place_fitness: ', place_fitness)
-print('trans_fitness: ', trans_fitness)
-print('unwanted_activities: ', unwanted_activities)
-
-# Displaying Diagnostics Information
-act_diagnostics = duration_diagnostics.diagnose_from_notexisting_activities(
-    log, unwanted_activities)
-for act in act_diagnostics:
-    print(act, act_diagnostics[act])
-
-trans_diagnostics = duration_diagnostics.diagnose_from_trans_fitness(
-    log, trans_fitness)
-for act in trans_diagnostics:
-    print(act, trans_diagnostics[act])
+# print(log)
 
 
-#
-# alignment base conformance
-#
 net, initial_marking, final_marking = pm4py.discover_petri_net_inductive(log)
-aligned_traces = pm4py.conformance_diagnostics_alignments(log, net, initial_marking, final_marking)
-print(aligned_traces)
+replayed_traces = pm4py.conformance_diagnostics_token_based_replay(log, net, initial_marking, final_marking)
+# print(replayed_traces)
+fitness_inductive = pm4py.fitness_token_based_replay(log, net, initial_marking, final_marking)
+print(fitness_inductive)
 
+net, initial_marking, final_marking = pm4py.discover_petri_net_alpha(log)
+replayed_traces = pm4py.conformance_diagnostics_token_based_replay(log, net, initial_marking, final_marking)
+# print(replayed_traces)
+fitness_alpha = pm4py.fitness_token_based_replay(log, net, initial_marking, final_marking)
+print(fitness_alpha)
+
+net, initial_marking, final_marking = pm4py.discover_petri_net_heuristics(log)
+replayed_traces = pm4py.conformance_diagnostics_token_based_replay(log, net, initial_marking, final_marking)
+# print(replayed_traces)
+fitness_heuristics = pm4py.fitness_token_based_replay(log, net, initial_marking, final_marking)
+print(fitness_heuristics)
+
+y1 = [
+    fitness_inductive['average_trace_fitness'],
+    fitness_inductive['log_fitness']]
+y2 = [
+    fitness_alpha['average_trace_fitness'],
+    fitness_alpha['log_fitness']]
+y3 = [
+    fitness_heuristics['average_trace_fitness'],
+    fitness_heuristics['log_fitness']]
+barWidth = 0.30
+br1 = np.arange(len(y1))
+br2 = [x + barWidth for x in br1]
+br3 = [x + barWidth for x in br2]
+
+fig = plt.subplots(figsize=(12, 8))
+
+# keys_fitness_inductive = list(fitness_inductive.keys())
+# values_fitness_inductive = list(fitness_inductive.values())
+plt.bar(br1, y1, color='maroon', width=barWidth)
+plt.bar(br2, y2, color='green', width=barWidth)
+plt.bar(br3, y3, color='blue', width=barWidth)
+
+plt.xlabel("Process Discovery Models")
+plt.ylabel("Conformance Matrics")
+plt.title("Comparison of Process Discovery Models")
+plt.xticks([r + barWidth for r in range(len(y1))],
+           ['Average Trace Fitness', 'Log Fitness'])
+plt.legend()
+plt.show()
