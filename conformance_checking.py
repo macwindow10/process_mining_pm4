@@ -53,9 +53,10 @@ fig = plt.subplots(figsize=(12, 8))
 # keys_fitness_inductive = list(fitness_inductive.keys())
 # values_fitness_inductive = list(fitness_inductive.values())
 plt.bar(br1, y1, color='maroon', width=barWidth)
-plt.xlabel("Process Discovery Models")
-plt.ylabel("Conformance Checking - Average Trace Fitness")
-plt.title("Comparison of Process Discovery Models")
+plt.xlabel("Process Discovery Models", fontsize=18)
+plt.ylabel("Average Trace Fitness", fontsize=18)
+plt.title("Conformance Checking of Process Discovery Models",
+          fontdict={'fontsize': 18})
 plt.xticks([r for r in range(len(y1))],
            ['Inductive Miner', 'Alpha Miner', 'Heuristic Miner'])
 xlocs, xlabs = plt.xticks()
@@ -72,9 +73,10 @@ barWidth = 0.30
 br1 = np.arange(len(y1))
 fig = plt.subplots(figsize=(12, 8))
 plt.bar(br1, y1, color='blue', width=barWidth)
-plt.xlabel("Process Discovery Models")
-plt.ylabel("Conformance Checking - Log Fitness")
-plt.title("Comparison of Process Discovery Models")
+plt.xlabel("Process Discovery Models", fontsize=18)
+plt.ylabel("Log Fitness", fontsize=18)
+plt.title("Conformance Checking of Process Discovery Models",
+          fontdict={'fontsize': 18})
 plt.xticks([r for r in range(len(y1))],
            ['Inductive Miner', 'Alpha Miner', 'Heuristic Miner'])
 xlocs, xlabs = plt.xticks()

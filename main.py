@@ -39,7 +39,9 @@ print(df_selected.dtypes)
 log = log_converter.apply(df_selected)
 # print(log)
 
-# ALPHA
+#
+# ALPHA Miner
+#
 alpha_net, initial_marking, final_marking = alpha_miner.apply(log)
 gviz = pn_visualizer.apply(alpha_net, initial_marking, final_marking)
 pn_visualizer.view(gviz)
@@ -64,7 +66,9 @@ dfg = dfg_discovery.apply(log, variant=dfg_discovery.Variants.PERFORMANCE)
 gviz = dfg_visualization.apply(dfg, log=log, variant=dfg_visualization.Variants.PERFORMANCE)
 dfg_visualization.view(gviz)
 
-# heuristics miner
+#
+# HEURISTIC Miner
+#
 heu_net = heuristics_miner.apply_heu(log)
 gviz = hn_visualizer.apply(heu_net)
 hn_visualizer.view(gviz)
@@ -80,7 +84,9 @@ gviz = pn_visualizer.apply(net, im, fm,
 pn_visualizer.view(gviz)
 # pn_visualizer.save(gviz, 'heuristic_miner_petri_net.png')
 
-# Inductive miner
+#
+# INDUCTIVE Miner
+#
 # create the process tree
 tree = inductive_miner.apply(log)
 gviz = pt_visualizer.apply(tree)

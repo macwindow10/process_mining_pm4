@@ -4,7 +4,8 @@ from sklearn.cluster import KMeans
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
-students_activity = pd.read_csv('students_activity.csv')
+# students_activity = pd.read_csv('students_activity.csv')
+students_activity = pd.read_csv('students_activity2023-02-20.csv')
 print(students_activity.head(10))
 
 final_grades = pd.read_csv('final_grades.csv')
