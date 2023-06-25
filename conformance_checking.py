@@ -14,7 +14,7 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
 # Load the CSV file into a pandas DataFrame
-df = pd.read_csv('high_performers.csv')
+df = pd.read_csv('total_students.csv')
 selected_columns = ['Case_id', 'Activity', 'timestamp', 'Case']
 df_selected = df[selected_columns]
 df_selected = df_selected.rename(columns={
