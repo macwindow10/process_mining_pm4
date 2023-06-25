@@ -115,10 +115,10 @@ pn_visualizer.view(gviz)
 if save_visualizations_on_file:
     pn_visualizer.save(gviz, 'ilp_miner_patri_net.png')
 
+'''
 #
 # DIRECTLY FOLLOWS Graph
 #
-'''
 # frequency graph from log
 dfg = dfg_discovery.apply(log)
 gviz = dfg_visualization.apply(dfg, log=log, variant=dfg_visualization.Variants.FREQUENCY)
@@ -134,8 +134,8 @@ if save_visualizations_on_file:
     dfg_visualization.save(gviz, "dfg_performace.png", parameters=parameters)
 '''
 
-traces = performance_map.get_transition_performance_with_token_replay(log, net, initial_marking, final_marking)
-print(traces)
+# traces = performance_map.get_transition_performance_with_token_replay(log, net, initial_marking, final_marking)
+# print(traces)
 # traces_for_event_a = traces['a']['all_values']
 # print(traces_for_event_a)
 

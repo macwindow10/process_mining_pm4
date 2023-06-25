@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pm4py
 from pm4py.objects.conversion.log import converter as log_converter
+from pm4py.objects.conversion.process_tree import converter as pt_converter
+from pm4py.algo.discovery.dfg import algorithm as dfg_discovery
 from pm4py.algo.evaluation.replay_fitness.algorithm import token_replay as token_replay_evaluator
 from pm4py.algo.evaluation.precision import algorithm as token_replay_precision
 from pm4py.algo.evaluation.generalization import algorithm as token_replay_generalization
@@ -25,46 +27,6 @@ df_selected['time:timestamp'] = pd.to_datetime(df_selected['time:timestamp'])
 print(df_selected.dtypes)
 log = log_converter.apply(df_selected)
 # print(log)
-
-#
-# plot summary table
-#
-row_headers = ['Alpha Miner', 'Inductive Miner', 'Heuristic Miner', 'ILP Miner']
-column_headers = ['Accuracy', 'Precision', 'F1 Score', 'Generalization', 'Simplicity']
-val3 = [
-    [1, 0.7, 0.5, 0.75, 0.30],
-    [0.9, 0.5, 0.8, 0.65, 1.0],
-    [0.78, 0.8, 0.9, 0.8, 0.80],
-    [0.6, 0.3, 0.9, 0.5, 0.90]
-]
-fig, ax = plt.subplots()
-fig_background_color = 'skyblue'
-fig_border = 'steelblue'
-plt.figure(linewidth=2,
-           edgecolor=fig_border,
-           facecolor=fig_background_color)
-ax.set_axis_off()
-rcolors = plt.cm.BuPu(np.full(len(row_headers), 0.1))
-ccolors = plt.cm.BuPu(np.full(len(column_headers), 0.1))
-table = ax.table(
-    cellText=val3,
-    rowLabels=row_headers,
-    colLabels=column_headers,
-    rowColours=rcolors,
-    colColours=ccolors,
-    cellLoc='center',
-    rowLoc='right',
-    loc='center')
-ax.set_title('matplotlib.axes.Axes.table() function Example',
-             fontweight="bold")
-'''
-plt.savefig('pyplot-table-figure-style.png',
-            bbox_inches='tight',
-            edgecolor=fig.get_edgecolor(),
-            facecolor=fig.get_facecolor(),
-            dpi=150)
-            '''
-plt.show()
 
 #
 # Conformance Checking for Alpha
@@ -126,7 +88,7 @@ print('heuristics miner simplicity: ', simplicity_heuristics)
 # print(fitness_heuristics)
 
 #
-# Conformance Checking for Directly Follows Graph...
+# Conformance Checking for ILP...
 #
 net, initial_marking, final_marking = pm4py.discover_petri_net_ilp(log)
 fitness_ilp = token_replay_evaluator.apply(log, net, initial_marking, final_marking)
@@ -143,6 +105,17 @@ print('ilp miner simplicity: ', simplicity_ilp)
 # print(replayed_traces)
 # fitness_ilp = pm4py.fitness_token_based_replay(log, net, initial_marking, final_marking)
 # print(fitness_ilp)
+
+#
+# Conformance Checking for Directly Follows Graph...
+#
+'''
+dfg = dfg_discovery.apply(log, variant=dfg_discovery.Variants.PERFORMANCE)
+print('dfg: ', dfg)
+net, initial_marking, final_marking = pt_converter.apply(df)
+fitness_dfg = token_replay_evaluator.apply(log, net, initial_marking, final_marking)
+print('fitness_dfg: ', fitness_dfg)
+'''
 
 #
 # plot accuracy
@@ -168,6 +141,7 @@ plt.xticks([r for r in range(len(y1))],
 xlocs, xlabs = plt.xticks()
 for i, v in enumerate(y1):
     plt.text(xlocs[i] - 0.05, v + 0.01, str(round(v, 2)))
+plt.savefig("Conformance Checking Accuracy.PNG", dpi=200, bbox_inches='tight')
 plt.show()
 
 #
@@ -192,6 +166,7 @@ plt.xticks([r for r in range(len(y1))],
 xlocs, xlabs = plt.xticks()
 for i, v in enumerate(y1):
     plt.text(xlocs[i] - 0.05, v + 0.01, str(round(v, 2)))
+plt.savefig("Conformance Checking Precision.PNG", dpi=200, bbox_inches='tight')
 plt.show()
 
 #
@@ -206,7 +181,7 @@ y1 = [
 barWidth = 0.30
 br1 = np.arange(len(y1))
 fig = plt.subplots(figsize=(12, 8))
-plt.bar(br1, y1, color='blue', width=barWidth)
+plt.bar(br1, y1, color='green', width=barWidth)
 plt.xlabel("Process Discovery Models", fontsize=18)
 plt.ylabel("F1 Score", fontsize=18)
 plt.title("Conformance Checking of Process Discovery Models",
@@ -216,6 +191,7 @@ plt.xticks([r for r in range(len(y1))],
 xlocs, xlabs = plt.xticks()
 for i, v in enumerate(y1):
     plt.text(xlocs[i] - 0.05, v + 0.01, str(round(v, 2)))
+plt.savefig("Conformance Checking F1Score.PNG", dpi=200, bbox_inches='tight')
 plt.show()
 
 #
@@ -230,7 +206,7 @@ y1 = [
 barWidth = 0.30
 br1 = np.arange(len(y1))
 fig = plt.subplots(figsize=(12, 8))
-plt.bar(br1, y1, color='green', width=barWidth)
+plt.bar(br1, y1, color='red', width=barWidth)
 plt.xlabel("Process Discovery Models", fontsize=18)
 plt.ylabel("Generalization", fontsize=18)
 plt.title("Conformance Checking of Process Discovery Models",
@@ -240,6 +216,7 @@ plt.xticks([r for r in range(len(y1))],
 xlocs, xlabs = plt.xticks()
 for i, v in enumerate(y1):
     plt.text(xlocs[i] - 0.05, v + 0.01, str(round(v, 2)))
+plt.savefig("Conformance Checking Generalization.PNG", dpi=200, bbox_inches='tight')
 plt.show()
 
 #
@@ -254,7 +231,7 @@ y1 = [
 barWidth = 0.30
 br1 = np.arange(len(y1))
 fig = plt.subplots(figsize=(12, 8))
-plt.bar(br1, y1, color='green', width=barWidth)
+plt.bar(br1, y1, color='black', width=barWidth)
 plt.xlabel("Process Discovery Models", fontsize=18)
 plt.ylabel("Simplicity", fontsize=18)
 plt.title("Conformance Checking of Process Discovery Models",
@@ -264,4 +241,41 @@ plt.xticks([r for r in range(len(y1))],
 xlocs, xlabs = plt.xticks()
 for i, v in enumerate(y1):
     plt.text(xlocs[i] - 0.05, v + 0.01, str(round(v, 2)))
+plt.savefig("Conformance Checking Simplicity.PNG", dpi=200, bbox_inches='tight')
+plt.show()
+
+#
+# plot summary table
+#
+row_headers = ['Alpha Miner', 'Inductive Miner', 'Heuristic Miner', 'ILP Miner']
+column_headers = ['Accuracy', 'Precision', 'F1 Score', 'Generalization', 'Simplicity']
+cell_values = [
+    [fitness_alpha['log_fitness'], precision_alpha, f1score_alpha, generalization_alpha, simplicity_alpha],
+    [fitness_inductive['log_fitness'], precision_inductive, f1score_inductive, generalization_inductive,
+     simplicity_inductive],
+    [fitness_heuristics['log_fitness'], precision_heuristics, f1score_heuristics, generalization_heuristics,
+     simplicity_heuristics],
+    [fitness_ilp['log_fitness'], precision_ilp, f1score_ilp, generalization_ilp, simplicity_ilp]
+]
+# fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(10, 2 + 6 / 2.5))
+ax.set_axis_off()
+rcolors = plt.cm.BuPu(np.full(len(row_headers), 0.1))
+ccolors = plt.cm.BuPu(np.full(len(column_headers), 0.1))
+table = ax.table(
+    cellText=cell_values,
+    rowLabels=row_headers,
+    colLabels=column_headers,
+    rowColours=rcolors,
+    colColours=ccolors,
+    cellLoc='center',
+    rowLoc='right',
+    loc='center')
+table.scale(1, 2)
+table.set_fontsize(16)
+ax.set_title('Conformance Checking \n Comparison of Process Discovery Models',
+             fontsize=18,
+             fontweight="bold")
+plt.tight_layout()
+plt.savefig("Summary Table.png", dpi=200, bbox_inches='tight')
 plt.show()
