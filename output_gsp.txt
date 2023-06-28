@@ -1,0 +1,14 @@
+user_login | #SUP: 4 #SID: 0 1 2 3
+view_lecture | #SUP: 4 #SID: 0 1 2 3
+watch_video_lecture | #SUP: 4 #SID: 0 1 2 3
+download_handout | #SUP: 3 #SID: 0 1 2
+attemp_quiz | #SUP: 3 #SID: 1 2 3
+view_quiz_list | #SUP: 3 #SID: 0 2 3
+user_login | view_lecture | #SUP: 4 #SID: 0 1 2 3
+user_login | watch_video_lecture | #SUP: 4 #SID: 0 1 2 3
+view_lecture | watch_video_lecture | #SUP: 3 #SID: 0 2 3
+watch_video_lecture | view_lecture | #SUP: 3 #SID: 1 2 3
+watch_video_lecture | watch_video_lecture | #SUP: 3 #SID: 0 1 3
+download_handout | watch_video_lecture | #SUP: 3 #SID: 0 1 2
+user_login | watch_video_lecture | view_lecture | #SUP: 3 #SID: 1 2 3
+user_login | watch_video_lecture | watch_video_lecture | #SUP: 3 #SID: 0 1 3
