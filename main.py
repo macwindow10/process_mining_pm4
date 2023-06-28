@@ -10,6 +10,7 @@ from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.algo.discovery.ilp import algorithm as ilp_miner
 from pm4py.algo.discovery.dfg import algorithm as dfg_discovery
 from pm4py.algo.organizational_mining.sna import algorithm as sna_factory
+from pm4py.algo.simulation.playout.petri_net import algorithm as simulator
 
 from pm4py.visualization.petri_net import visualizer as pn_visualizer
 from pm4py.visualization.heuristics_net import visualizer as hn_visualizer
@@ -23,7 +24,8 @@ from PIL import Image
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
-save_visualizations_on_file = True
+save_visualizations_on_file = False
+show_visualizations = False
 
 # Load the CSV file into a pandas DataFrame
 df = pd.read_csv('total_students.csv')
@@ -49,7 +51,8 @@ log = log_converter.apply(df_selected)
 #
 alpha_net, initial_marking, final_marking = alpha_miner.apply(log)
 gviz = pn_visualizer.apply(alpha_net, initial_marking, final_marking)
-pn_visualizer.view(gviz)
+if show_visualizations:
+    pn_visualizer.view(gviz)
 if save_visualizations_on_file:
     pn_visualizer.save(gviz, "alpha_miner.png")
 
@@ -57,7 +60,8 @@ parameters = {pn_visualizer.Variants.FREQUENCY.value.Parameters.FORMAT: "png"}
 gviz = pn_visualizer.apply(alpha_net, initial_marking, final_marking,
                            parameters=parameters,
                            variant=pn_visualizer.Variants.FREQUENCY, log=log)
-pn_visualizer.view(gviz)
+if show_visualizations:
+    pn_visualizer.view(gviz)
 # save the Petri net
 if save_visualizations_on_file:
     pn_visualizer.save(gviz, "alpha_miner_petri_net.png")
@@ -67,7 +71,8 @@ if save_visualizations_on_file:
 #
 heu_net = heuristics_miner.apply_heu(log)
 gviz = hn_visualizer.apply(heu_net)
-hn_visualizer.view(gviz)
+if show_visualizations:
+    hn_visualizer.view(gviz)
 if save_visualizations_on_file:
     hn_visualizer.save(gviz, 'heuristic_miner.png')
 
@@ -78,7 +83,8 @@ gviz = pn_visualizer.apply(net, im, fm,
                            parameters=parameters,
                            variant=pn_visualizer.Variants.FREQUENCY,
                            log=log)
-pn_visualizer.view(gviz)
+if show_visualizations:
+    pn_visualizer.view(gviz)
 if save_visualizations_on_file:
     pn_visualizer.save(gviz, 'heuristic_miner_petri_net.png')
 
@@ -87,14 +93,19 @@ if save_visualizations_on_file:
 #
 tree = inductive_miner.apply(log)
 gviz = pt_visualizer.apply(tree)
-pt_visualizer.view(gviz)
+if show_visualizations:
+    pt_visualizer.view(gviz)
 if save_visualizations_on_file:
     pt_visualizer.save(gviz, 'inductive_miner.png')
 bpmn_model = pm4py.convert_to_bpmn(tree)
-pm4py.view_bpmn(bpmn_model)
+if show_visualizations:
+    pm4py.view_bpmn(bpmn_model)
 
 # convert the process tree to a petri net
 net, initial_marking, final_marking = pt_converter.apply(tree)
+print(net)
+print(initial_marking)
+print(final_marking)
 # alternatively, use the inductive_miner to create a petri net from scratch
 # net, initial_marking, final_marking = inductive_miner.apply(log)
 parameters = {pn_visualizer.Variants.FREQUENCY.value.Parameters.FORMAT: "png"}
@@ -111,7 +122,8 @@ if save_visualizations_on_file:
 #
 ilp_net, im, fm = ilp_miner.apply(log)
 gviz = pn_visualizer.apply(ilp_net, im, fm)
-pn_visualizer.view(gviz)
+if show_visualizations:
+    pn_visualizer.view(gviz)
 if save_visualizations_on_file:
     pn_visualizer.save(gviz, 'ilp_miner_patri_net.png')
 
@@ -146,4 +158,5 @@ if save_visualizations_on_file:
 handover_nw = sna_factory.log_handover.apply(log)
 # print(handover_nw)
 gviz_hw_py = sna_vis.apply(handover_nw)
-gnx = sna_vis.view(gviz_hw_py)
+if show_visualizations:
+    gnx = sna_vis.view(gviz_hw_py)

@@ -42,8 +42,6 @@ print('alpha miner precision: ', precision_alpha)
 print('alpha miner f1score: ', f1score_alpha)
 print('alpha miner generalization: ', generalization_alpha)
 print('alpha miner simplicity: ', simplicity_alpha)
-# replayed_traces = pm4py.conformance_diagnostics_token_based_replay(log, net, initial_marking, final_marking)
-# print(replayed_traces)
 # fitness_alpha = pm4py.fitness_token_based_replay(log, net, initial_marking, final_marking)
 # print(fitness_alpha)
 
@@ -51,21 +49,25 @@ print('alpha miner simplicity: ', simplicity_alpha)
 # Conformance Checking for Inductive
 #
 net, initial_marking, final_marking = pm4py.discover_petri_net_inductive(log)
-fitness_inductive = token_replay_evaluator.apply(log, net, initial_marking, final_marking)
-precision_inductive = token_replay_precision.apply(log, net, initial_marking, final_marking)
-f1score_inductive = 2 * (precision_inductive * fitness_inductive['log_fitness']) / (
-        precision_inductive + fitness_inductive['log_fitness'])
-generalization_inductive = token_replay_generalization.apply(log, net, initial_marking, final_marking)
-simplicity_inductive = token_replay_simplicity.apply(net)
-print('inductive miner accuracy: ', fitness_inductive['log_fitness'])
-print('inductive miner precision: ', precision_inductive)
-print('inductive miner f1score: ', f1score_inductive)
-print('inductive miner generalization: ', generalization_inductive)
-print('inductive miner simplicity: ', simplicity_inductive)
-# replayed_traces = pm4py.conformance_diagnostics_token_based_replay(log, net, initial_marking, final_marking)
-# print(replayed_traces)
+# fitness_inductive = token_replay_evaluator.apply(log, net, initial_marking, final_marking)
+# precision_inductive = token_replay_precision.apply(log, net, initial_marking, final_marking)
+# f1score_inductive = 2 * (precision_inductive * fitness_inductive['log_fitness']) / (
+#        precision_inductive + fitness_inductive['log_fitness'])
+# generalization_inductive = token_replay_generalization.apply(log, net, initial_marking, final_marking)
+# simplicity_inductive = token_replay_simplicity.apply(net)
+# print('inductive miner accuracy: ', fitness_inductive['log_fitness'])
+# print('inductive miner precision: ', precision_inductive)
+# print('inductive miner f1score: ', f1score_inductive)
+# print('inductive miner generalization: ', generalization_inductive)
+# print('inductive miner simplicity: ', simplicity_inductive)
+replayed_traces = pm4py.conformance_diagnostics_token_based_replay(log, net, initial_marking, final_marking)
+print(replayed_traces)
+print(replayed_traces.__len__())
+for t in replayed_traces:
+    print(t['trace_is_fit'])
 # fitness_inductive = pm4py.fitness_token_based_replay(log, net, initial_marking, final_marking)
 # print(fitness_inductive)
+exit(1)
 
 #
 # Conformance Checking for Heuristic

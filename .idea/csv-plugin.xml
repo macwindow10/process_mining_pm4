@@ -24,6 +24,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\output.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\students_activity.csv">
           <value>
             <Attribute>

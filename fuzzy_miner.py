@@ -9,10 +9,10 @@ log = pd.read_csv('high_performers.csv')  # Replace with the path to your event 
 # Filter, transform, or enrich the log as per your requirements
 
 # Extract the relevant information from the event log (e.g., activities, timestamps)
-activities = log[
-    'Activity'].unique()  # Replace 'activity_column_name' with the actual column name in your log that represents activities
-timestamps = log[
-    'timestamp'].values  # Replace 'timestamp_column_name' with the actual column name in your log that represents timestamps
+# Replace 'activity_column_name' with the actual column name in your log that represents activities
+activities = log['Activity'].unique()
+# Replace 'timestamp_column_name' with the actual column name in your log that represents timestamps
+timestamps = log['timestamp'].values
 
 # Calculate the fuzzy relations between activities based on timestamps
 fuzzy_relation_matrix = np.zeros((len(activities), len(activities)))
