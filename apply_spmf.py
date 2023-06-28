@@ -144,7 +144,7 @@ def main():
     """
 
     spmf = Spmf("GSP", input_filename="contextGSP_2.txt",
-                output_filename="output_gsp.txt",
+                output_filename="output_spmfgsp.txt",
                 spmf_bin_location_dir="venv/Lib/site-packages/spmf/",
                 arguments=[0.5, 1])
     spmf.run()
