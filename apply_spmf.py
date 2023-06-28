@@ -37,14 +37,14 @@ def create_sequences_file_for_spmf(df_u):
         if r['Activity'] == 'a':
             sequence = '1 -1 '
         elif r['Activity'] == 'b':
-            sequence = sequence + '2 '
+            sequence = sequence + '2 -1 '
         elif r['Activity'] == 'c':
-            if previous_activity == 'b':
-                sequence = sequence + '3 '
-            else:
-                sequence = sequence + '3 -1 '
+            sequence = sequence + '3 '
         elif r['Activity'] == 'd':
-            sequence = sequence + '4 -1 '
+            if previous_activity == 'c':
+                sequence = sequence + '4 '
+            else:
+                sequence = sequence + '4 -1 '
         elif r['Activity'] == 'e':
             sequence = sequence + '5 -1 '
         elif r['Activity'] == 'f':
@@ -132,7 +132,7 @@ def main():
     print(len(sequences_for_gsppy))
 
     """
-    # Different algorithms:
+    # Spmf GSP algorithms:
     spmf = Spmf("GSP", input_filename="contextPrefixSpan.txt",
                 output_filename="output.txt",
                 spmf_bin_location_dir="venv/Lib/site-packages/spmf/",
@@ -143,13 +143,11 @@ def main():
     spmf.to_csv("output.csv")
     """
 
-    """
     spmf = Spmf("GSP", input_filename="contextGSP_2.txt",
                 output_filename="output_gsp.txt",
                 spmf_bin_location_dir="venv/Lib/site-packages/spmf/",
                 arguments=[0.5, 1])
     spmf.run()
-    """
 
     # gsp-py
     gsp_py = GSP(sequences_for_gsppy)
