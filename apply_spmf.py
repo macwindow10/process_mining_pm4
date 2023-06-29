@@ -116,6 +116,7 @@ def main():
     if os.path.exists('contextGSP_2.txt'):
         os.remove('contextGSP_2.txt')
 
+    records_processes = 1
     sequences_for_gsppy = []
     for u in userids:
         list = [u]
@@ -125,10 +126,13 @@ def main():
         df_u = df.loc[mask]
         df_u = df_u.sort_values(by=['timestamp'])
         print('records count: ', len(df_u))
+        records_processes = records_processes + len(df_u)
         # print(df_u)
+
         create_sequences_file_for_spmf(df_u)
         generate_sequences_for_gsppy(df_u, sequences_for_gsppy)
 
+    print('records_processes: ', records_processes)
     print(len(sequences_for_gsppy))
 
     """
