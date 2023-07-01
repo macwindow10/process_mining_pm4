@@ -3,6 +3,7 @@ from spmf import Spmf
 from gsppy.gsp import GSP
 import pandas as pd
 import pickle
+from matplotlib.ticker import MaxNLocator
 import matplotlib.pyplot as plt
 
 pd.set_option('display.max_columns', None)
@@ -232,11 +233,12 @@ def main():
     result = pd.concat(frames)
     # result.groupby('cluster')['Grades'].plot(kind='hist')
     fig, ax = plt.subplots()
-    # ax2 = ax.twinx()
-    # result = result.sort_values(by="Grades")
-    ax.bar(result.cluster, result["Grades"], label='Cluster')
-    # ax2.bar(result.User_id, result["cluster"], color='green', label='Hold')
-    # ax.set_xticklabels(result.cluster)
+    ax.bar(result.cluster, result["Grades"])
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.set_xlabel("Cluster 1: Student who performed desired activities")
+    ax.set_xlabel("Cluster 2: Student who performed random activities")
+    ax.set_ylabel("Student Grades")
+    fig.tight_layout()
     plt.show()
 
     # gsp-py
