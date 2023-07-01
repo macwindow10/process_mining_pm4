@@ -206,17 +206,39 @@ def main():
         user_id = user_mapping_lines[sid_index].split(':')[0]
         # print('user_id: ', user_id)
         userids_c_d_e.append(int(user_id))
+
+    file_context_gsp_user_mapping.close()
+
     print('userids_c_d_e count: ', len(userids_c_d_e))
     print('userids_c_d_e: ', userids_c_d_e)
 
-    mask = df['Case_id'].isin(userids_c_d_e)
-    df_cde = df.loc[mask]
-    print('df_cde count: ', len(df_cde))
-    df_rest = df.loc[~mask]
-    print('df_rest count: ', len(df_rest))
-    df_cde.plot(x="Case_id", y=["Grades"], kind="bar", figsize=(9, 8))
+    df_final_grades = pd.read_csv('final_grades.csv')
+    mask = df_final_grades['User_id'].isin(userids_c_d_e)
+
+    df_final_grades_cde = df_final_grades.loc[mask]
+    df_final_grades_cde['cluster'] = 1  # 'Students who followed desired activities'
+    # print('df_final_grades_cde count: ', len(df_final_grades_cde))
+
+    df_final_grades_rest = df_final_grades.loc[~mask]
+    df_final_grades_rest['cluster'] = 2  # 'Students who performed random activities'
+    # print('df_final_grades_rest count: ', len(df_final_grades_rest))
+
+    df_final_grades_cde.plot(x="User_id", y=["Grades"], kind="bar", figsize=(9, 8))
     plt.show()
-    
+    df_final_grades_rest.plot(x="User_id", y=["Grades"], kind="bar", figsize=(9, 8))
+    plt.show()
+
+    frames = [df_final_grades_cde, df_final_grades_rest]
+    result = pd.concat(frames)
+    # result.groupby('cluster')['Grades'].plot(kind='hist')
+    fig, ax = plt.subplots()
+    # ax2 = ax.twinx()
+    # result = result.sort_values(by="Grades")
+    ax.bar(result.cluster, result["Grades"], label='Cluster')
+    # ax2.bar(result.User_id, result["cluster"], color='green', label='Hold')
+    # ax.set_xticklabels(result.cluster)
+    plt.show()
+
     # gsp-py
     # gsp_py = GSP(sequences_for_gsppy)
     # result = gsp_py.search(0.5)
