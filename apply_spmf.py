@@ -98,7 +98,7 @@ def generate_sequences_for_gsppy(df_u, sequences):
 def main():
     # Load the CSV file into a pandas DataFrame
     df = pd.read_csv('total_students.csv')
-    selected_columns = ['Case_id', 'Activity', 'timestamp']
+    selected_columns = ['Case_id', 'Activity', 'timestamp', 'Grades']
     df = df[selected_columns]
     df['timestamp'] = pd.to_datetime(df['timestamp'])
     timestamp = df.timestamp.unique()
@@ -115,13 +115,17 @@ def main():
 
     if os.path.exists('contextGSP_2.txt'):
         os.remove('contextGSP_2.txt')
+    if os.path.exists('userIDs.txt'):
+        os.remove('userIDs.txt')
 
+    file_user_ids = open('userIDs.txt', "w")
     records_processes = 1
     sequences_for_gsppy = []
     for u in userids:
         list = [u]
         # print(u)
         print('user id: ', list)
+
         mask = df['Case_id'].isin(list)
         df_u = df.loc[mask]
         df_u = df_u.sort_values(by=['timestamp'])
@@ -132,6 +136,9 @@ def main():
         create_sequences_file_for_spmf(df_u)
         generate_sequences_for_gsppy(df_u, sequences_for_gsppy)
 
+        file_user_ids.write(str(df_u.iloc[0]['Case_id']) + ', ' + str(df_u.iloc[0]['Grades']) + '\n')
+
+    file_user_ids.close()
     print('records_processes: ', records_processes)
     print(len(sequences_for_gsppy))
 
