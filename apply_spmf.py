@@ -231,12 +231,14 @@ def main():
                              ax=ax[0])
     ax[0].set_xlabel("Student Id")
     ax[0].set_ylabel("Student Grades")
+    ax[0].hlines(y=42, xmin=0, xmax=20, linewidth=2, color='r')
     df_final_grades_rest.plot(x="User_id", y=["Grades"],
                               kind="bar",
                               color='black',
                               ax=ax[1])
     ax[1].set_xlabel("Student Id")
     ax[1].set_ylabel("Student Grades")
+    ax[1].hlines(y=42, xmin=0, xmax=20, linewidth=2, color='r')
     plt.show()
 
     frames = [df_final_grades_cde, df_final_grades_rest]
