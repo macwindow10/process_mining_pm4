@@ -18,6 +18,13 @@ def create_sequences_file_for_spmf(df_u):
     else:
         append_write = 'w'
     f = open('contextGSP_2.txt', append_write)
+
+    if os.path.exists('contextGSP_2_user_mapping.txt'):
+        append_write = 'a'
+    else:
+        append_write = 'w'
+    file_context_gsp_user_mapping = open('contextGSP_2_user_mapping.txt', append_write)
+
     if append_write == 'w':
         f.write("""@CONVERTED_FROM_TEXT
 @ITEM=1=user_login
@@ -32,6 +39,7 @@ def create_sequences_file_for_spmf(df_u):
 @ITEM=10=user_logout
 @ITEM=-1=|
 """)
+
     previous_activity = ''
     for index, r in df_u.iterrows():
         if r['Activity'] == 'a':
@@ -59,11 +67,13 @@ def create_sequences_file_for_spmf(df_u):
             sequence = sequence + '10 -1 -2'
             sequences.append(sequence)
             f.write(sequence + '\n')
+            file_context_gsp_user_mapping.write(str(r['Case_id']) + ': ' + sequence + '\n')
             sequence = ''
 
         previous_activity = r['Activity']
 
     f.close()
+    file_context_gsp_user_mapping.close()
 
 
 def generate_sequences_for_gsppy(df_u, sequences):
@@ -115,32 +125,37 @@ def main():
 
     if os.path.exists('contextGSP_2.txt'):
         os.remove('contextGSP_2.txt')
+    if os.path.exists('contextGSP_2_user_mapping.txt'):
+        os.remove('contextGSP_2_user_mapping.txt')
     if os.path.exists('userIDs.txt'):
         os.remove('userIDs.txt')
 
     file_user_ids = open('userIDs.txt', "w")
+    file_user_ids.write('Id' + ', ' + 'Grades' + '\n')
     records_processes = 1
     sequences_for_gsppy = []
     for u in userids:
         list = [u]
         # print(u)
-        print('user id: ', list)
+        # print('user id: ', list)
 
         mask = df['Case_id'].isin(list)
         df_u = df.loc[mask]
         df_u = df_u.sort_values(by=['timestamp'])
-        print('records count: ', len(df_u))
+        # print('records count: ', len(df_u))
         records_processes = records_processes + len(df_u)
         # print(df_u)
 
         create_sequences_file_for_spmf(df_u)
         generate_sequences_for_gsppy(df_u, sequences_for_gsppy)
 
-        file_user_ids.write(str(df_u.iloc[0]['Case_id']) + ', ' + str(df_u.iloc[0]['Grades']) + '\n')
+        file_user_ids.write(
+            str(df_u.iloc[0]['Case_id']) + ', ' +
+            str(df_u.iloc[0]['Grades']) + '\n')
 
     file_user_ids.close()
     print('records_processes: ', records_processes)
-    print(len(sequences_for_gsppy))
+    # print(len(sequences_for_gsppy))
 
     """
     # Spmf GSP algorithms:
@@ -154,17 +169,59 @@ def main():
     spmf.to_csv("output.csv")
     """
 
+    """
     spmf = Spmf("GSP", input_filename="contextGSP_2.txt",
                 output_filename="output_spmfgsp.txt",
                 spmf_bin_location_dir="venv/Lib/site-packages/spmf/",
                 arguments=[0.5, 1])
     spmf.run()
+    """
 
+    # process SPMF GSP output file
+    file_output_spmfgsp = open("output_spmfgsp.txt", "r")
+    lines = file_output_spmfgsp.readlines()
+    count = 0
+    support = ""
+    sids = []
+    for line in lines:
+        count += 1
+        if line.__contains__("watch_video_lecture download_handout attemp_quiz"):
+            line_items = line.split()
+            for i in range(len(line_items)):
+                if line_items[i] == '#SUP:':
+                    support = line_items[i + 1]
+                elif line_items[i] == '#SID:':
+                    sids = line_items[(i + 1):]
+                    # print('sids: ', sids)
+                    # print('sids len: ', len(sids))
+            break
+    file_output_spmfgsp.close()
+
+    file_context_gsp_user_mapping = open('contextGSP_2_user_mapping.txt', "r")
+    user_mapping_lines = file_context_gsp_user_mapping.readlines()
+    userids_c_d_e = []
+    for sid in sids:
+        # print('sid: ', sid)
+        sid_index = int(sid)
+        user_id = user_mapping_lines[sid_index].split(':')[0]
+        # print('user_id: ', user_id)
+        userids_c_d_e.append(int(user_id))
+    print('userids_c_d_e count: ', len(userids_c_d_e))
+    print('userids_c_d_e: ', userids_c_d_e)
+
+    mask = df['Case_id'].isin(userids_c_d_e)
+    df_cde = df.loc[mask]
+    print('df_cde count: ', len(df_cde))
+    df_rest = df.loc[~mask]
+    print('df_rest count: ', len(df_rest))
+    df_cde.plot(x="Case_id", y=["Grades"], kind="bar", figsize=(9, 8))
+    plt.show()
+    
     # gsp-py
-    gsp_py = GSP(sequences_for_gsppy)
-    result = gsp_py.search(0.5)
-    print(result)
-    print('result')
+    # gsp_py = GSP(sequences_for_gsppy)
+    # result = gsp_py.search(0.5)
+    # print(result)
+    print('program ends')
 
 
 if __name__ == "__main__":
