@@ -224,9 +224,19 @@ def main():
     df_final_grades_rest['cluster'] = 2  # 'Students who performed random activities'
     # print('df_final_grades_rest count: ', len(df_final_grades_rest))
 
-    df_final_grades_cde.plot(x="User_id", y=["Grades"], kind="bar", figsize=(9, 8))
-    plt.show()
-    df_final_grades_rest.plot(x="User_id", y=["Grades"], kind="bar", figsize=(9, 8))
+    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(12, 6))
+    df_final_grades_cde.plot(x="User_id", y=["Grades"],
+                             kind="bar",
+                             color='blue',
+                             ax=ax[0])
+    ax[0].set_xlabel("Student Id")
+    ax[0].set_ylabel("Student Grades")
+    df_final_grades_rest.plot(x="User_id", y=["Grades"],
+                              kind="bar",
+                              color='black',
+                              ax=ax[1])
+    ax[1].set_xlabel("Student Id")
+    ax[1].set_ylabel("Student Grades")
     plt.show()
 
     frames = [df_final_grades_cde, df_final_grades_rest]
@@ -235,8 +245,8 @@ def main():
     fig, ax = plt.subplots()
     ax.bar(result.cluster, result["Grades"])
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-    ax.set_xlabel("Cluster 1: Student who performed desired activities")
-    ax.set_xlabel("Cluster 2: Student who performed random activities")
+    ax.set_xlabel(
+        "Cluster 1: Student who performed desired activities \nCluster 2: Student who performed random activities")
     ax.set_ylabel("Student Grades")
     fig.tight_layout()
     plt.show()
