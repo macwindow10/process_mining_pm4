@@ -231,26 +231,42 @@ def main():
                              ax=ax[0])
     ax[0].set_xlabel("Student Id")
     ax[0].set_ylabel("Student Grades")
-    ax[0].hlines(y=42, xmin=0, xmax=20, linewidth=2, color='r')
+    # ax[0].hlines(y=42, xmin=0, xmax=20, linewidth=2, color='r')
+    ax[0].title.set_text("Student who performed desire sequence of activities")
     df_final_grades_rest.plot(x="User_id", y=["Grades"],
                               kind="bar",
                               color='black',
                               ax=ax[1])
     ax[1].set_xlabel("Student Id")
     ax[1].set_ylabel("Student Grades")
-    ax[1].hlines(y=42, xmin=0, xmax=20, linewidth=2, color='r')
+    # ax[1].hlines(y=42, xmin=0, xmax=20, linewidth=2, color='r')
+    ax[1].title.set_text('Student who performed random activities')
     plt.show()
 
     frames = [df_final_grades_cde, df_final_grades_rest]
     result = pd.concat(frames)
-    # result.groupby('cluster')['Grades'].plot(kind='hist')
-    fig, ax = plt.subplots()
-    ax.bar(result.cluster, result["Grades"])
+    print(len(result))
+    fig, ax = plt.subplots(figsize=(8, 5))
+    result['cluster'].value_counts().plot(kind='barh')
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-    ax.set_xlabel(
-        "Cluster 1: Student who performed desired activities \nCluster 2: Student who performed random activities")
-    ax.set_ylabel("Student Grades")
-    fig.tight_layout()
+    ax.set_xlabel("No. of Students")
+    ax.set_ylabel("Clusters")
+    plt.title(
+        "Cluster 1: Student who performed desired sequence of activities\n"
+        "Cluster 2: Student who performed random activities");
+    plt.show()
+
+    # distribution graph
+    x1 = result.loc[result.cluster == 1, 'Grades']
+    x2 = result.loc[result.cluster == 2, 'Grades']
+    fig, ax = plt.subplots()
+    kwargs = dict(alpha=0.5, bins=1)
+    plt.hist(x1, **kwargs, color='g', label='Cluster 1: Desired Activities')
+    plt.hist(x2, **kwargs, color='b', label='Cluster 2: Random Activities')
+    plt.gca().set(title='Comparison and Distribution of Students Grades in Clusters', ylabel='Frequency')
+    plt.xlim(50, 75)
+    ax.set_xlabel("Students Grades")
+    plt.legend()
     plt.show()
 
     # gsp-py
