@@ -89,7 +89,7 @@ def generate_sequences_for_gsppy(df_u, sequences):
         elif r['Activity'] == 'd':
             sequence.append('download_handouts')
         elif r['Activity'] == 'e':
-            sequence.append('attempt_Quiz')
+            sequence.append('attemp_Quiz')
         elif r['Activity'] == 'f':
             sequence.append('view_Quiz_List')
         elif r['Activity'] == 'g':
