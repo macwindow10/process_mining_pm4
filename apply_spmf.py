@@ -260,6 +260,8 @@ def main():
     x1 = result.loc[result.cluster == 1, 'Grades']
     x2 = result.loc[result.cluster == 2, 'Grades']
     fig, ax = plt.subplots()
+    # kwargs = dict(alpha=0.5, bins=[60, 61, 62, 63, 64, 65, 66, 68, 69, 70, 71, 72, 74, 76, 78, 80])
+    # kwargs = dict(alpha=0.5, bins=[0, 10, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100])
     kwargs = dict(alpha=0.5, bins=1)
     plt.hist(x1, **kwargs, color='g', label='Cluster 1: Desired Activities')
     plt.hist(x2, **kwargs, color='b', label='Cluster 2: Random Activities')

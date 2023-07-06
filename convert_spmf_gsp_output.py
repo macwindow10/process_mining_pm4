@@ -29,7 +29,7 @@ def main():
     lines = file_output_spmfgsp.readlines()
     count = 0
     outputs = ""
-    add_support_value = False
+    add_support_value = True
     add_line_number = False
     for line in lines:
         count += 1
@@ -63,7 +63,8 @@ def main():
             outputs = outputs + str(count) + ": " + output + '\n'
         else:
             if add_support_value:
-                outputs = outputs + output + '\t\t' + support + '\n'
+                s = round(float(support) / float(456.0), 2)
+                outputs = outputs + str(s) + ":\t" + output + '\n'
             else:
                 outputs = outputs + output + '\n'
     file_output_spmfgsp.close()
