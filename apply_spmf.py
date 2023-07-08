@@ -14,6 +14,7 @@ pd.set_option('expand_frame_repr', False)
 def create_sequences_file_for_spmf(df_u):
     sequences = []
     sequence = ''
+    sequence_with_activity_names = ''
     if os.path.exists('contextGSP_2.txt'):
         append_write = 'a'
     else:
@@ -25,6 +26,12 @@ def create_sequences_file_for_spmf(df_u):
     else:
         append_write = 'w'
     file_context_gsp_user_mapping = open('contextGSP_2_user_mapping.txt', append_write)
+
+    # contextGSP_2_with_activity_names
+    if os.path.exists('contextGSP_2_with_activity_names.txt'):
+        file_context_gsp_with_activity_names = open('contextGSP_2_with_activity_names.txt', 'a')
+    else:
+        file_context_gsp_with_activity_names = open('contextGSP_2_with_activity_names.txt', 'w')
 
     if append_write == 'w':
         f.write("""@CONVERTED_FROM_TEXT
@@ -45,31 +52,46 @@ def create_sequences_file_for_spmf(df_u):
     for index, r in df_u.iterrows():
         if r['Activity'] == 'a':
             sequence = '1 -1 '
+            sequence_with_activity_names = 'login | '
         elif r['Activity'] == 'b':
             sequence = sequence + '2 -1 '
+            sequence_with_activity_names = sequence_with_activity_names + 'view_lecture | '
         elif r['Activity'] == 'c':
             sequence = sequence + '3 '
+            sequence_with_activity_names = sequence_with_activity_names + 'watch_video_lecture, '
         elif r['Activity'] == 'd':
             if previous_activity == 'c':
                 sequence = sequence + '4 '
+                sequence_with_activity_names = sequence_with_activity_names + 'download_handout '
             else:
                 sequence = sequence + '4 -1 '
+                sequence_with_activity_names = sequence_with_activity_names + 'download_handout | '
         elif r['Activity'] == 'e':
             sequence = sequence + '5 -1 '
+            sequence_with_activity_names = sequence_with_activity_names + 'attemp_quiz | '
         elif r['Activity'] == 'f':
             sequence = sequence + '6 -1 '
+            sequence_with_activity_names = sequence_with_activity_names + 'view_quiz_list | '
         elif r['Activity'] == 'g':
             sequence = sequence + '7 -1 '
+            sequence_with_activity_names = sequence_with_activity_names + 'view_progress | '
         elif r['Activity'] == 'h':
             sequence = sequence + '8 -1 '
+            sequence_with_activity_names = sequence_with_activity_names + 'view_assignment | '
         elif r['Activity'] == 'i':
             sequence = sequence + '9 -1 '
+            sequence_with_activity_names = sequence_with_activity_names + 'view_announcement | '
         elif r['Activity'] == 'j':
             sequence = sequence + '10 -1 -2'
+            sequence_with_activity_names = sequence_with_activity_names + 'user_logout'
+
             sequences.append(sequence)
+
             f.write(sequence + '\n')
             file_context_gsp_user_mapping.write(str(r['Case_id']) + ': ' + sequence + '\n')
+            file_context_gsp_with_activity_names.write(sequence_with_activity_names + '\n')
             sequence = ''
+            sequence_with_activity_names = ''
 
         previous_activity = r['Activity']
 
