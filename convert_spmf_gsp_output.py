@@ -2,23 +2,23 @@ from types import NoneType
 
 
 def mapping_of(v):
-    if v == 'user_login':
+    if v == 'user_login' or v == 'login':
         return 'a'
     if v == 'view_lecture':
         return 'b'
-    if v == 'watch_video_lecture':
+    if v == 'watch_video_lecture' or v == 'watch_video_lecture,':
         return 'c'
     if v == 'download_handout':
         return 'd'
     if v == 'attemp_quiz':
         return 'e'
-    if v == 'view_Quiz_List':
+    if v == 'view_Quiz_List' or v == 'view_quiz_list':
         return 'f'
     if v == 'view_progress':
         return 'g'
     if v == 'view_assignment':
         return 'h'
-    if v == 'view_announcements':
+    if v == 'view_announcements' or v == 'view_announcement':
         return 'i'
     if v == 'user_logout':
         return 'j'
@@ -26,13 +26,15 @@ def mapping_of(v):
 
 def main():
     file_output_spmfgsp = open("output_spmfgsp.txt", "r")
+    file_output_spmfgsp = open("contextGSP_2_with_activity_names.txt", "r")
     lines = file_output_spmfgsp.readlines()
     count = 0
     outputs = ""
-    add_support_value = True
-    add_line_number = False
+    add_support_value = False
+    add_line_number = True
     for line in lines:
         count += 1
+        # print('count: ' + str(count))
         line_values = line.split('|')
         output = ""
         for line_value in line_values:
@@ -48,11 +50,14 @@ def main():
             else:
                 line_value = line_value.strip()
                 line_value_items = line_value.split(' ')
+                # print(line_value_items)
                 if len(output) > 0:
                     output = output + ", "
                 output = output + "<("
                 if len(line_value_items) == 1:
                     v = mapping_of(line_value_items[0])
+                    if v is None:
+                        print('None: ' + line_value_items[0])
                     # print(v, ',', line_value_items)
                     output = output + v
                     output = output + ")>"
@@ -60,11 +65,13 @@ def main():
                     for line_value_item in line_value_items:
                         # print(line_value_item)
                         v = mapping_of(line_value_item)
+                        if v is None:
+                            print('None: ' + line_value_item)
                         output = output + v + ", "
                     output = output.rstrip(' ').rstrip(',')
                     output = output + ")>"
         if add_line_number:
-            outputs = outputs + str(count) + ": " + output + '\n'
+            outputs = outputs + str(count) + "\t" + output + '\n'
         else:
             if add_support_value:
                 s = round(float(support) / float(456.0), 2)
