@@ -41,6 +41,10 @@ def main():
                 # print('Support and SIDs: ', support_line)
                 support = support_line.split(":")[1].strip().split(' ')[0].strip()
                 # print(support)
+                sids = support_line.split(":")[2].strip().split()
+                sids = [str((int(sid) + 1)) for sid in sids]
+                sids = ', '.join(sids)
+                # print(sids)
             else:
                 line_value = line_value.strip()
                 line_value_items = line_value.split(' ')
@@ -64,7 +68,7 @@ def main():
         else:
             if add_support_value:
                 s = round(float(support) / float(456.0), 2)
-                outputs = outputs + str(s) + ":\t" + output + '\n'
+                outputs = outputs + str(s) + ":\t" + output + "\t" + sids + '\n'
             else:
                 outputs = outputs + output + '\n'
     file_output_spmfgsp.close()
