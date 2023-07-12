@@ -3,6 +3,7 @@ from spmf import Spmf
 from gsppy.gsp import GSP
 import pandas as pd
 import pickle
+import seaborn as sns
 from matplotlib.ticker import MaxNLocator
 import matplotlib.pyplot as plt
 
@@ -232,14 +233,15 @@ def main():
 
     file_context_gsp_user_mapping.close()
 
-    print('userids_c_d_e count: ', len(userids_c_d_e))
-    print('userids_c_d_e: ', userids_c_d_e)
+    # print('userids_c_d_e count: ', len(userids_c_d_e))
+    # print('userids_c_d_e: ', userids_c_d_e)
 
     df_final_grades = pd.read_csv('final_grades.csv')
     mask = df_final_grades['User_id'].isin(userids_c_d_e)
 
     df_final_grades_cde = df_final_grades.loc[mask]
     df_final_grades_cde['cluster'] = 1  # 'Students who followed desired activities'
+    # print('df_final_grades_cde: ', df_final_grades_cde)
     # print('df_final_grades_cde count: ', len(df_final_grades_cde))
 
     df_final_grades_rest = df_final_grades.loc[~mask]
@@ -254,10 +256,10 @@ def main():
     ax[0].set_xlabel("Student Id")
     ax[0].set_ylabel("Student Grades")
     # ax[0].hlines(y=42, xmin=0, xmax=20, linewidth=2, color='r')
-    ax[0].title.set_text("Student who performed desire sequence of activities")
+    ax[0].title.set_text("Student who performed desired sequence of activities")
     df_final_grades_rest.plot(x="User_id", y=["Grades"],
                               kind="bar",
-                              color='black',
+                              color='crimson',
                               ax=ax[1])
     ax[1].set_xlabel("Student Id")
     ax[1].set_ylabel("Student Grades")
@@ -278,19 +280,48 @@ def main():
         "Cluster 2: Student who performed random activities");
     plt.show()
 
-    # distribution graph
+    # 2 clusters histogram
     x1 = result.loc[result.cluster == 1, 'Grades']
     x2 = result.loc[result.cluster == 2, 'Grades']
     fig, ax = plt.subplots()
     # kwargs = dict(alpha=0.5, bins=[60, 61, 62, 63, 64, 65, 66, 68, 69, 70, 71, 72, 74, 76, 78, 80])
     # kwargs = dict(alpha=0.5, bins=[0, 10, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100])
     kwargs = dict(alpha=0.5, bins=1)
-    plt.hist(x1, **kwargs, color='g', label='Cluster 1: Desired Activities')
-    plt.hist(x2, **kwargs, color='b', label='Cluster 2: Random Activities')
+    plt.hist(x1, **kwargs, color='blue', label='Cluster 1: Desired Activities')
+    plt.hist(x2, **kwargs, color='crimson', label='Cluster 2: Random Activities')
     plt.gca().set(title='Comparison and Distribution of Students Grades in Clusters', ylabel='Frequency')
     plt.xlim(50, 75)
     ax.set_xlabel("Students Grades")
     plt.legend()
+    plt.show()
+
+    # KDE
+    df_final_grades_cde = df_final_grades_cde[['Grades']]
+    sns.kdeplot(df_final_grades_cde, color='blue', fill=True)
+    plt.xlabel('Grades')
+    plt.ylabel('Probability Density')
+    plt.gca().set(title='Normal Distribution of Students Cluster \nwho performed desired sequence of activities')
+    plt.gca().get_legend().remove()
+    plt.tight_layout()
+    plt.show()
+
+    df_final_grades = df_final_grades[['Grades']]
+    df_final_grades = df_final_grades[df_final_grades['Grades'] != 0]
+    sns.kdeplot(df_final_grades.squeeze(), color='red', fill=True)
+    plt.xlabel('Grades')
+    plt.ylabel('Probability Density')
+    plt.gca().set(title='Normal Distribution of Students Cluster \nwho performed random sequence of activities')
+    # plt.gca().get_legend().remove()
+    plt.tight_layout()
+    plt.show()
+
+    fig, ax = plt.subplots()
+    sns.kdeplot(data=df_final_grades_cde.squeeze(), ax=ax, color='blue', fill=True, shade=True, label='Cluster 1')
+    sns.kdeplot(data=df_final_grades.squeeze(), ax=ax, color='red', fill=True, shade=True, label='Cluster 2')
+    plt.ylabel('Probability Density')
+    plt.gca().set(title='Comparison of Normal Distribution of both Clusters')
+    ax.legend()
+    plt.tight_layout()
     plt.show()
 
     # gsp-py
