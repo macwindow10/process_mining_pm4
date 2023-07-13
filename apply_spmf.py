@@ -305,9 +305,10 @@ def main():
     plt.tight_layout()
     plt.show()
 
-    df_final_grades = df_final_grades[['Grades']]
-    df_final_grades = df_final_grades[df_final_grades['Grades'] != 0]
-    sns.kdeplot(df_final_grades.squeeze(), color='red', fill=True)
+    df_final_grades_rest = df_final_grades_rest[['Grades']]
+    df_final_grades_rest = df_final_grades_rest[df_final_grades_rest['Grades'] != 0]
+    print(df_final_grades_rest)
+    sns.kdeplot(df_final_grades_rest.squeeze(), color='red', fill=True)
     plt.xlabel('Grades')
     plt.ylabel('Probability Density')
     plt.gca().set(title='Normal Distribution of Students Cluster \nwho performed random sequence of activities')
@@ -316,8 +317,8 @@ def main():
     plt.show()
 
     fig, ax = plt.subplots()
-    sns.kdeplot(data=df_final_grades_cde.squeeze(), ax=ax, color='blue', fill=True, shade=True, label='Cluster 1')
-    sns.kdeplot(data=df_final_grades.squeeze(), ax=ax, color='red', fill=True, shade=True, label='Cluster 2')
+    sns.kdeplot(data=df_final_grades_cde.squeeze(), ax=ax, color='blue', fill=True, label='Cluster 1')
+    sns.kdeplot(data=df_final_grades_rest.squeeze(), ax=ax, color='red', fill=True, label='Cluster 2')
     plt.ylabel('Probability Density')
     plt.gca().set(title='Comparison of Normal Distribution of both Clusters')
     ax.legend()
