@@ -25,7 +25,7 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
 save_visualizations_on_file = False
-show_visualizations = False
+show_visualizations = True
 
 # Load the CSV file into a pandas DataFrame
 df = pd.read_csv('total_students.csv')
@@ -37,10 +37,13 @@ df_selected = df_selected.rename(columns={
     'timestamp': 'time:timestamp',
     'Case': 'org:resource'
 })
-df_selected['time:timestamp'] = pd.to_datetime(df_selected['time:timestamp'])
+df_selected = df_selected.convert_dtypes()
+df_selected['time:timestamp'] = pd.to_datetime(df_selected['time:timestamp'],
+                                               format="mixed")
 print(df_selected.dtypes)
 # print(df_selected)
 # df_selected = df_selected.sort_values(by=['case:concept:name', 'time:timestamp'])
+df_selected = df_selected.sort_values(by=['time:timestamp'])
 # print(df_selected)
 
 log = log_converter.apply(df_selected)

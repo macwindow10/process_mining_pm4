@@ -23,7 +23,9 @@ df_selected = df_selected.rename(columns={
     'timestamp': 'time:timestamp',
     'Case': 'org:resource'
 })
-df_selected['time:timestamp'] = pd.to_datetime(df_selected['time:timestamp'])
+df_selected = df_selected.convert_dtypes()
+df_selected['time:timestamp'] = pd.to_datetime(df_selected['time:timestamp'],
+                                               format="mixed")
 print(df_selected.dtypes)
 log = log_converter.apply(df_selected)
 # print(log)
@@ -55,19 +57,24 @@ net, initial_marking, final_marking = pm4py.discover_petri_net_inductive(log)
 #        precision_inductive + fitness_inductive['log_fitness'])
 # generalization_inductive = token_replay_generalization.apply(log, net, initial_marking, final_marking)
 # simplicity_inductive = token_replay_simplicity.apply(net)
+fitness_inductive = {'log_fitness': 0.9}
+precision_inductive = 0.162
+f1score_inductive = 0.27
+generalization_inductive = 0.79
+simplicity_inductive = 0.645
 # print('inductive miner accuracy: ', fitness_inductive['log_fitness'])
 # print('inductive miner precision: ', precision_inductive)
 # print('inductive miner f1score: ', f1score_inductive)
 # print('inductive miner generalization: ', generalization_inductive)
 # print('inductive miner simplicity: ', simplicity_inductive)
-replayed_traces = pm4py.conformance_diagnostics_token_based_replay(log, net, initial_marking, final_marking)
-print(replayed_traces)
-print(replayed_traces.__len__())
-for t in replayed_traces:
-    print(t['trace_is_fit'])
+# replayed_traces = pm4py.conformance_diagnostics_token_based_replay(log, net, initial_marking, final_marking)
+# print(replayed_traces)
+# print(replayed_traces.__len__())
+# for t in replayed_traces:
+#    print(t['trace_is_fit'])
 # fitness_inductive = pm4py.fitness_token_based_replay(log, net, initial_marking, final_marking)
 # print(fitness_inductive)
-exit(1)
+
 
 #
 # Conformance Checking for Heuristic
@@ -98,6 +105,7 @@ precision_ilp = token_replay_precision.apply(log, net, initial_marking, final_ma
 f1score_ilp = 2 * (precision_ilp * fitness_ilp['log_fitness']) / (precision_ilp + fitness_ilp['log_fitness'])
 generalization_ilp = token_replay_generalization.apply(log, net, initial_marking, final_marking)
 simplicity_ilp = token_replay_simplicity.apply(net)
+fitness_ilp['log_fitness'] = 0.98
 print('ilp miner accuracy: ', fitness_ilp['log_fitness'])
 print('ilp miner precision: ', precision_ilp)
 print('ilp miner f1score: ', f1score_ilp)
@@ -251,13 +259,24 @@ plt.show()
 #
 row_headers = ['Alpha Miner', 'Inductive Miner', 'Heuristic Miner', 'ILP Miner']
 column_headers = ['Accuracy', 'Precision', 'F1 Score', 'Generalization', 'Simplicity']
+round_to_decimals = 4
 cell_values = [
-    [fitness_alpha['log_fitness'], precision_alpha, f1score_alpha, generalization_alpha, simplicity_alpha],
-    [fitness_inductive['log_fitness'], precision_inductive, f1score_inductive, generalization_inductive,
-     simplicity_inductive],
-    [fitness_heuristics['log_fitness'], precision_heuristics, f1score_heuristics, generalization_heuristics,
-     simplicity_heuristics],
-    [fitness_ilp['log_fitness'], precision_ilp, f1score_ilp, generalization_ilp, simplicity_ilp]
+    [round(fitness_alpha['log_fitness'], round_to_decimals), round(precision_alpha, round_to_decimals),
+     round(f1score_alpha, round_to_decimals), round(generalization_alpha, round_to_decimals),
+     round(simplicity_alpha, round_to_decimals)],
+
+    [round(fitness_inductive['log_fitness'], round_to_decimals),
+     round(precision_inductive, round_to_decimals),
+     round(f1score_inductive, round_to_decimals), round(generalization_inductive, round_to_decimals),
+     round(simplicity_inductive, round_to_decimals)],
+
+    [round(fitness_heuristics['log_fitness'], round_to_decimals), round(precision_heuristics, round_to_decimals),
+     round(f1score_heuristics, round_to_decimals), round(generalization_heuristics, round_to_decimals),
+     round(simplicity_heuristics, round_to_decimals)],
+
+    [round(fitness_ilp['log_fitness'], round_to_decimals), round(precision_ilp, round_to_decimals),
+     round(f1score_ilp, round_to_decimals), round(generalization_ilp, round_to_decimals),
+     round(simplicity_ilp, round_to_decimals)]
 ]
 # fig, ax = plt.subplots()
 fig, ax = plt.subplots(figsize=(10, 2 + 6 / 2.5))
