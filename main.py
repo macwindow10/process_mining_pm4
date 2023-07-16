@@ -28,7 +28,7 @@ save_visualizations_on_file = False
 show_visualizations = True
 
 # Load the CSV file into a pandas DataFrame
-df = pd.read_csv('total_students.csv')
+df = pd.read_csv('total_students_2.csv')
 selected_columns = ['Case_id', 'Activity', 'timestamp', 'Case']
 df_selected = df[selected_columns]
 df_selected = df_selected.rename(columns={
@@ -43,7 +43,7 @@ df_selected['time:timestamp'] = pd.to_datetime(df_selected['time:timestamp'],
 print(df_selected.dtypes)
 # print(df_selected)
 # df_selected = df_selected.sort_values(by=['case:concept:name', 'time:timestamp'])
-df_selected = df_selected.sort_values(by=['time:timestamp'])
+# df_selected = df_selected.sort_values(by=['time:timestamp'])
 # print(df_selected)
 
 log = log_converter.apply(df_selected)

@@ -14,7 +14,7 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
 # Load the CSV file into a pandas DataFrame
-df = pd.read_csv('total_students.csv')
+df = pd.read_csv('total_students_2.csv')
 selected_columns = ['Case_id', 'Activity', 'timestamp', 'Case']
 df_selected = df[selected_columns]
 df_selected = df_selected.rename(columns={
@@ -105,7 +105,7 @@ precision_ilp = token_replay_precision.apply(log, net, initial_marking, final_ma
 f1score_ilp = 2 * (precision_ilp * fitness_ilp['log_fitness']) / (precision_ilp + fitness_ilp['log_fitness'])
 generalization_ilp = token_replay_generalization.apply(log, net, initial_marking, final_marking)
 simplicity_ilp = token_replay_simplicity.apply(net)
-fitness_ilp['log_fitness'] = 0.98
+# fitness_ilp['log_fitness'] = 0.98
 print('ilp miner accuracy: ', fitness_ilp['log_fitness'])
 print('ilp miner precision: ', precision_ilp)
 print('ilp miner f1score: ', f1score_ilp)
